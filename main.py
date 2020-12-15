@@ -105,7 +105,8 @@ def check():
         for reservation in reservations:
             for room in rooms['data']:
                 if reservation['room_name'] == room['name']:
-                    if room['seats_num'] < 0:
+                    print(room)
+                    if room['seats_num'] > 0:
                         to.append(reservation['user_id'])
                         messages.append(create_message(reservation['room_name']))
                         delete_reservation(reservation['user_id'])
