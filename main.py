@@ -20,15 +20,15 @@ else:
 db = firestore.client()
 
 
-users = []
 rooms = {}
+reservations = []
 
 
 def init_var():
     print('### init_var ###')
-    global users, rooms
-    users = []
+    global rooms, reservations
     rooms = {}
+    reservations = []
 
 
 def get_time():
@@ -50,9 +50,9 @@ def get_rooms():
             rooms = rooms_ref.to_dict().get(before)
 
 
-def get_users():
+def get_reservations():
     print('### get_users ###')
-    global users
+    global reservations
     now = get_time()
     users_ref = db.collection('users')
     query_ref = users_ref.where('reserved', '==', True)
@@ -63,13 +63,12 @@ def get_users():
         user_id = doc.id
         if delta < 60:
             room_name = doc_dic['room_name']
-            users.append({
+            reservations.append({
                 'user_id': user_id,
                 'room_name': room_name
             })
         else:
             users_ref.document(user_id).update({'reserved': False})
-    return users
 
 
 def push_message(user_id, room_name):
@@ -95,12 +94,12 @@ def delete_all_reservation():
 def check():
     print('### check ###')
     if rooms:
-        for user in users:
+        for reservation in reservations:
             for room in rooms['data']:
-                if user['room_name'] == room['name']:
+                if reservation['room_name'] == room['name']:
                     if room['seats_num'] > 0:
-                        push_message(user['user_id'], user['room_name'])
-                        delete_reservation(user['user_id'])
+                        push_message(reservation['user_id'], reservation['room_name'])
+                        delete_reservation(reservation['user_id'])
     else:
         delete_all_reservation()
 
@@ -115,7 +114,7 @@ def run(Request):
     get_rooms()
 
     # 通知を行うユーザーの抽出
-    get_users()
+    get_reservations()
 
     # 予約があり空席があった場合に通知
     check()
