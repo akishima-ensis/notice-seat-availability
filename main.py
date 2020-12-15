@@ -22,17 +22,13 @@ db = firestore.client()
 
 rooms = {}
 reservations = []
-to = []
-messages = []
 
 
 def init_var():
     print('### init_var ###')
-    global rooms, reservations, to, messages
+    global rooms, reservations
     rooms = {}
     reservations = []
-    to = []
-    messages = []
 
 
 def get_time():
@@ -75,13 +71,10 @@ def get_reservations():
             users_ref.document(user_id).update({'reserved': False})
 
 
-def create_message(room_name):
-    return TextSendMessage(text=f'【{room_name}】空席ができました。')
-
-
-def push_messages():
+def push_messages(to, room_name):
     print('### push_messages ###')
-    line_bot_api.multicast(to, messages)
+    message = TextSendMessage(text=f'【{room_name}】空席ができました。')
+    line_bot_api.push_message(to, message)
 
 
 def delete_reservation(user_id):
@@ -99,15 +92,13 @@ def delete_all_reservation():
 
 
 def check():
-    global to, messages
     print('### check ###')
     if rooms:
         for reservation in reservations:
             for room in rooms['data']:
                 if reservation['room_name'] == room['name']:
                     if room['seats_num'] > 0:
-                        to.append(reservation['user_id'])
-                        messages.append(create_message(reservation['room_name']))
+                        push_messages(reservation['user_id'], reservations['room_name'])
                         delete_reservation(reservation['user_id'])
     else:
         delete_all_reservation()
@@ -125,12 +116,8 @@ def run(Request):
     # 通知を行うユーザーの抽出
     get_reservations()
 
-    # 予約ごとに空席を確認
+    # 予約ごとに空席を確認しメッセージ送信
     check()
-
-    # メッセージの送信
-    if to:
-        push_messages()
 
     return 'ok'
 
