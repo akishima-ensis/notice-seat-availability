@@ -71,10 +71,10 @@ def get_reservations():
             users_ref.document(user_id).update({'reserved': False})
 
 
-def push_messages(to, room_name):
-    print('### push_messages ###')
+def push_messages(user_id, room_name):
     message = TextSendMessage(text=f'【{room_name}】空席ができました。')
-    line_bot_api.push_message(to, message)
+    line_bot_api.push_message(user_id, message)
+    print(f'* pushed --> {user_id}')
 
 
 def delete_reservation(user_id):
@@ -98,7 +98,7 @@ def check():
             for room in rooms['data']:
                 if reservation['room_name'] == room['name']:
                     if room['seats_num'] > 0:
-                        push_messages(reservation['user_id'], reservations['room_name'])
+                        push_messages(reservation['user_id'], reservation['room_name'])
                         delete_reservation(reservation['user_id'])
     else:
         delete_all_reservation()
