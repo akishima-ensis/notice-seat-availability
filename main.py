@@ -32,6 +32,8 @@ db = firestore.client()
 def get_rooms_data(now: datetime) -> Optional[Dict]:
     """
     現在の学習室の空席情報の取得
+    現在の学習室の空席状況がなかった場合は1分前の空席情報を取得
+    それもなかったらNoneを返す
 
     Args:
         now(datetime): 現在時刻
