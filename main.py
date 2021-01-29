@@ -5,20 +5,23 @@ from datetime import datetime, timedelta, timezone
 from linebot import LineBotApi
 from linebot.models import TextSendMessage
 
+import config
 
-# linebotsdk初期化
+# デバッグ
+DEBUG = config.DEBUG
+
+# line-bot-sdk初期化
 LINE_CHANNEL_ACCESS_TOKEN = os.environ.get('LINE_CHANNEL_ACCESS_TOKEN')
 line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 
-# firebase初期化
-cred_key = 'sa_key.json'
-if os.path.exists(cred_key):
-    cred = credentials.Certificate(cred_key)
+# firestore初期化
+if DEBUG:
+    SERVICE_ACCOUNT_KEY = config.SERVICE_ACCOUNT_KEY
+    cred = credentials.Certificate(SERVICE_ACCOUNT_KEY)
     firebase_admin.initialize_app(cred)
 else:
     firebase_admin.initialize_app()
 db = firestore.client()
-
 
 rooms = {}
 reservations = []
@@ -122,5 +125,5 @@ def run(Request):
     return 'ok'
 
 
-# debug
-# run('ok')
+if DEBUG:
+    run('ok')
