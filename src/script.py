@@ -35,7 +35,7 @@ def get_rooms_data(now: datetime) -> Optional[Dict]:
 def get_reservations(now: datetime) -> List[Optional[Dict]]:
     """
     空席通知予約を行ったユーザーと対象学習室名を取得
-    予約から60分以上経った場合はusersコレクションからuser_idに基づくドキュメントを削除する
+    予約から60分以上経った場合はreservationsコレクションからuser_idに基づくドキュメントを削除する
 
     Args:
         now(datetime): 現在時刻
@@ -43,10 +43,10 @@ def get_reservations(now: datetime) -> List[Optional[Dict]]:
     Returns:
         list
     """
-    print('### get_users ###')
+    print('### get_reservations ###')
     reservations = []
-    users_ref = db.collection('users').stream()
-    for user in users_ref:
+    reservations_ref = db.collection('reservations').stream()
+    for user in reservations_ref:
         doc_dic = user.to_dict()
         delta = int((now - doc_dic['reserve_time']).total_seconds() / 60)
         user_id = user.id
@@ -73,30 +73,30 @@ def push_message(user_id: str, room_name: str) -> None:
 
 def delete_reservation(user_id: str) -> None:
     """
-    users内のuser_idに基づくドキュメントを削除する
+    reservationsコレクション内のuser_idに基づくドキュメントを削除する
 
     Args:
         user_id: LINEのユーザーID
     """
-    db.collection('users').document(user_id).delete()
+    db.collection('reservations').document(user_id).delete()
     print(f'* Deleted the document -> user_id: {user_id}')
 
 
 def delete_all_reservations() -> None:
     """
-    usersコレクション内のドキュメントを全て削除する
+    reservationsコレクション内のドキュメントを全て削除する
     """
     print('## delete_all_reservations ##')
-    users_ref = db.collection('users')
-    for user in users_ref.stream():
-        users_ref.document(user.id).delete()
+    reservations_ref = db.collection('reservations')
+    for user in reservations_ref.stream():
+        reservations_ref.document(user.id).delete()
         print(f'* Deleted the document -> user_id: {user.id}')
 
 
 def check(rooms: Dict, reservations: List) -> None:
     """
     空席通知予約を行った学習室に空席があったら通知する
-    通知を行った場合通知を行ったユーザーをusersコレクションから削除する
+    通知を行ったユーザーをreservationsコレクションから削除する
 
     Args:
         rooms(dict): 各学習室の空席情報
