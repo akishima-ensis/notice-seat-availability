@@ -5,7 +5,7 @@ from linebot.models import TextSendMessage
 from src import db, line
 
 
-def get_rooms_data(now: datetime) -> Optional[Dict]:
+def get_rooms(now: datetime) -> Optional[Dict]:
     """
     現在の学習室の空席情報の取得
     現在の学習室の空席状況がなかった場合は1分前の空席情報を取得
