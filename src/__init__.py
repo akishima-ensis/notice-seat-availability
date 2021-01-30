@@ -1,5 +1,5 @@
 import firebase_admin
-from firebase_admin import credentials, firestore
+from firebase_admin import firestore
 from datetime import timedelta, timezone
 from linebot import LineBotApi
 
@@ -18,6 +18,7 @@ line = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 
 # firestore初期化
 if DEBUG:
+    from firebase_admin import credentials
     SERVICE_ACCOUNT_KEY = config.SERVICE_ACCOUNT_KEY
     cred = credentials.Certificate(SERVICE_ACCOUNT_KEY)
     firebase_admin.initialize_app(cred)
