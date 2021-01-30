@@ -48,7 +48,7 @@ def get_reservations(now: datetime) -> List[Optional[Dict]]:
     reservations_ref = db.collection('reservations').stream()
     for user in reservations_ref:
         doc_dic = user.to_dict()
-        delta = int((now - doc_dic['reserve_time']).total_seconds() / 60)
+        delta = int((now - doc_dic['reservation_time']).total_seconds() / 60)
         user_id = user.id
         if delta < 60:
             room_name = doc_dic['room_name']
