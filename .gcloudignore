@@ -1,0 +1,7 @@
+# ignore all
+*
+
+# upload list
+!requirements.txt
+!main.py
+!src/
