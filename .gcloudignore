@@ -1,5 +1,5 @@
 # ignore all
-*
+/*
 
 # upload list
 !requirements.txt
