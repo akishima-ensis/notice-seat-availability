@@ -16,7 +16,7 @@ jobs:
       - uses: GoogleCloudPlatform/github-actions/deploy-cloud-functions@master
         with:
           name: notice-seat-availability
-          runtime: python38
+          runtime: python39
           credentials: ${{ secrets.gcp_credentials }}
           entry_point: run
           region: asia-northeast1
