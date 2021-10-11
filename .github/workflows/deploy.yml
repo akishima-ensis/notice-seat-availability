@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: GoogleCloudPlatform/github-actions/deploy-cloud-functions@master
+      - uses: google-github-actions/deploy-cloud-functions@main
         with:
           name: notice-seat-availability
           runtime: python39
