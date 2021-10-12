@@ -1,11 +1,11 @@
-from typing import List, Dict, Optional
+from typing import Any, List, Dict
 from datetime import datetime, timedelta
 from linebot.models import TextSendMessage
 
 from src import db, line
 
 
-def get_rooms(now: datetime) -> Optional[Dict]:
+def get_rooms(now: datetime) -> Any:
     """
     現在の学習室の空席情報の取得
     現在の学習室の空席状況がなかった場合は1分前の空席情報を取得
@@ -30,9 +30,11 @@ def get_rooms(now: datetime) -> Optional[Dict]:
             before = (now - timedelta(minutes=1)).strftime('%H%M')
             rooms_data = rooms_ref.to_dict().get(before)
         return rooms_data
+    else:
+        None
 
 
-def get_reservations(now: datetime) -> List[Optional[Dict]]:
+def get_reservations(now: datetime) -> List[Dict[str, Any]]:
     """
     空席通知予約を行ったユーザーと対象学習室名を取得
     予約から60分以上経った場合はreservationsコレクションからuser_idに基づくドキュメントを削除する
@@ -58,7 +60,7 @@ def get_reservations(now: datetime) -> List[Optional[Dict]]:
     return reservations
 
 
-def push_message(user_id: str, room_name: str) -> None:
+def send_message(user_id: str, room_name: str) -> None:
     """
     クライアントにメッセージを送信する
 
@@ -93,7 +95,7 @@ def delete_all_reservations() -> None:
         print(f'* Deleted the document -> user_id: {user.id}')
 
 
-def check(rooms: Dict, reservations: List) -> None:
+def find_vacancy_and_send_message(rooms: Dict, reservations: List) -> None:
     """
     空席通知予約を行った学習室に空席があったら通知する
     通知を行ったユーザーをreservationsコレクションから削除する
@@ -107,5 +109,5 @@ def check(rooms: Dict, reservations: List) -> None:
         for room in rooms['data']:
             if reservation['room_name'] == room['name']:
                 if room['seats_num'] > 0:
-                    push_message(reservation['user_id'], reservation['room_name'])
+                    send_message(reservation['user_id'], reservation['room_name'])
                     delete_reservation(reservation['user_id'])

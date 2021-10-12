@@ -1,8 +1,11 @@
 from datetime import datetime
 
 from src import jst, DEBUG
-from src.script import get_rooms, get_reservations, check, delete_all_reservations
-
+from src.script import (
+    get_rooms, get_reservations,
+    find_vacancy_and_send_message,
+    delete_all_reservations
+)
 
 
 def run(Request):
@@ -19,7 +22,7 @@ def run(Request):
         # 空席通知予約を行ったユーザーと学習室名の取得
         reservations = get_reservations(now)
         # 予約ごとに空席を確認しメッセージ送信
-        check(rooms, reservations)
+        find_vacancy_and_send_message(rooms, reservations)
     else:
         # 空席情報が取得できなかった場合（開館時間外）usersコレクション内の全てのドキュメントを削除する
         delete_all_reservations()
