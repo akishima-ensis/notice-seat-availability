@@ -4,7 +4,6 @@ from src import jst, DEBUG
 from src.script import get_rooms, get_reservations, check, delete_all_reservations
 
 
-
 def run(Request):
 
     now = datetime.now(jst)
