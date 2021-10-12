@@ -60,7 +60,7 @@ def get_reservations(now: datetime) -> List[Dict[str, Any]]:
     return reservations
 
 
-def push_message(user_id: str, room_name: str) -> None:
+def send_message(user_id: str, room_name: str) -> None:
     """
     クライアントにメッセージを送信する
 
@@ -95,7 +95,7 @@ def delete_all_reservations() -> None:
         print(f'* Deleted the document -> user_id: {user.id}')
 
 
-def check(rooms: Dict, reservations: List) -> None:
+def find_vacancy_and_send_message(rooms: Dict, reservations: List) -> None:
     """
     空席通知予約を行った学習室に空席があったら通知する
     通知を行ったユーザーをreservationsコレクションから削除する
@@ -109,5 +109,5 @@ def check(rooms: Dict, reservations: List) -> None:
         for room in rooms['data']:
             if reservation['room_name'] == room['name']:
                 if room['seats_num'] > 0:
-                    push_message(reservation['user_id'], reservation['room_name'])
+                    send_message(reservation['user_id'], reservation['room_name'])
                     delete_reservation(reservation['user_id'])
