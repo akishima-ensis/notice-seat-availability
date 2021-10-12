@@ -3,23 +3,22 @@ from firebase_admin import firestore
 from datetime import timedelta, timezone
 from linebot import LineBotApi
 
-import config
+from src import config
 
-
-# デバッグ
+# 環境変数
 DEBUG = config.DEBUG
+LINE_CHANNEL_ACCESS_TOKEN = config.LINE_CHANNEL_ACCESS_TOKEN
+SERVICE_ACCOUNT_KEY = config.SERVICE_ACCOUNT_KEY
 
 # 日本標準時
 jst = timezone(timedelta(hours=+9), 'JST')
 
 # line-bot-sdk初期化
-LINE_CHANNEL_ACCESS_TOKEN = config.LINE_CHANNEL_ACCESS_TOKEN
 line = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 
 # firestore初期化
 if DEBUG:
     from firebase_admin import credentials
-    SERVICE_ACCOUNT_KEY = config.SERVICE_ACCOUNT_KEY
     cred = credentials.Certificate(SERVICE_ACCOUNT_KEY)
     firebase_admin.initialize_app(cred)
 else:
