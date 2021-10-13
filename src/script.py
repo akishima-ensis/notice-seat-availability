@@ -5,6 +5,16 @@ from linebot.models import TextSendMessage
 from src import db, line
 
 
+ROOM_NAME = {
+  0: '学習席（有線LAN有）',
+  1: '学習席',
+  2: '研究個室',
+  3: 'インターネット・DB席',
+  4: 'グループ学習室',
+  5: 'ティーンズ学習室',
+}
+
+
 def get_rooms(now: datetime) -> Any:
     """
     現在の学習室の空席情報の取得
@@ -53,8 +63,8 @@ def get_reservations(now: datetime) -> List[Dict[str, Any]]:
         delta = int((now - doc_dic['reservation_time']).total_seconds() / 60)
         user_id = user.id
         if delta < 60:
-            room_name = doc_dic['room_name']
-            reservations.append({'user_id': user_id, 'room_name': room_name})
+            room_num = doc_dic['room_num']
+            reservations.append({'user_id': user_id, 'room_num': room_num})
         else:
             delete_reservation(user_id)
     return reservations
@@ -106,8 +116,8 @@ def find_vacancy_and_send_message(rooms: Dict, reservations: List) -> None:
     """
     print('### check ###')
     for reservation in reservations:
-        for room in rooms['data']:
-            if reservation['room_name'] == room['name']:
-                if room['seats_num'] > 0:
-                    send_message(reservation['user_id'], reservation['room_name'])
-                    delete_reservation(reservation['user_id'])
+        room_num = reservation['room_num']
+        room = rooms['data'][room_num]
+        if room['seats_num'] > 0:
+            send_message(reservation['user_id'], ROOM_NAME[room])
+            delete_reservation(reservation['user_id'])
